@@ -16,8 +16,7 @@
     <div class="card">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
-            <!-- Los IDs deben coincidir exactamente con el JavaScript -->
-          <input type="email" id="email" placeholder="Correo electrónico" required>
+            <input type="email" id="email" placeholder="Correo electrónico" required>
             <input type="password" id="password" placeholder="Contraseña" required>
             <button type="submit">Ingresar</button>
         </form>
@@ -28,17 +27,11 @@
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Aquí es donde marcaba el error si los id no coincidían
             const emailInput = document.getElementById('email');
             const passwordInput = document.getElementById('password');
             const errorDiv = document.getElementById('error');
             
             errorDiv.innerText = '';
-
-            if (!emailInput || !passwordInput) {
-                errorDiv.innerText = 'Error interno: No se encontraron las casillas del formulario.';
-                return;
-            }
 
             try {
                 const response = await fetch('/api/login', {
