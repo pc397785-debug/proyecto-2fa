@@ -47,8 +47,8 @@ def send_email_code(to_email: str, code: str):
     msg["To"] = to_email
 
     try:
-        # Uso de SSL directo en el puerto 465 (requerido en Render)
-        with smtplib.SMTP_SSL("smtp.gmail.com", 587) as server:
+        # SSL directo por puerto 465 (evita el bloqueo 'Network is unreachable' en Render)
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
             server.login(sender_email, sender_password)
             server.sendmail(sender_email, to_email, msg.as_string())
     except Exception as e:
