@@ -110,20 +110,25 @@ def verify_2fa(data: Verify2FARequest):
 
 # --- SERVIR ARCHIVOS ESTÁTICOS Y RUTAS FRONTEND ---
 
-# Sirve los archivos de la carpeta actual (HTML, CSS, JS)
-app.mount("/static", StaticFiles(directory="."), name="static")
+# Montar carpeta de archivos estáticos
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 def read_root():
-    return FileResponse("login.html")
+    return FileResponse("static/login.html")
 
 @app.get("/login.html")
 def read_login():
-    return FileResponse("login.html")
+    return FileResponse("static/login.html")
 
 @app.get("/verify.html")
 def read_verify():
-    return FileResponse("verify.html")
+    return FileResponse("static/verify.html")
+
+@app.get("/dashboard.html")
+def read_dashboard():
+    return FileResponse("static/dashboard.html")
+
 
 @app.get("/dashboard.html")
 def read_dashboard():
