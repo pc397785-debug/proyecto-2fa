@@ -9,20 +9,18 @@
         input, button { width: 100%; padding: 10px; margin-top: 10px; border-radius: 4px; border: 1px solid #ccc; box-sizing: border-box; }
         button { background-color: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
         button:hover { background-color: #218838; }
-        .msg { margin-top: 10px; font-size: 14px; }
-        .error { color: red; }
-        .success { color: green; }
+        .error { color: red; margin-top: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
     <div class="card">
-        <h2>Verificación 2FA</h2>
+        <h2>Código de Verificación</h2>
         <p>Ingresa el código de 6 dígitos enviado a tu correo.</p>
         <form id="verifyForm">
-            <input type="text" id="code" placeholder="Código (6 dígitos)" maxlength="6" required style="text-align: center; letter-spacing: 5px; font-size: 18px;">
-            <button type="submit">Verificar Código</button>
+            <input type="text" id="code" placeholder="Código de 6 dígitos" required maxlength="6">
+            <button type="submit">Verificar</button>
         </form>
-        <div id="msg" class="msg"></div>
+        <div id="error" class="error"></div>
     </div>
 
     <script>
@@ -30,39 +28,30 @@
             e.preventDefault();
             const code = document.getElementById('code').value;
             const temp_token = sessionStorage.getItem('temp_token');
-            const msgDiv = document.getElementById('msg');
-            msgDiv.className = 'msg';
-            msgDiv.innerText = '';
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerText = '';
 
             if (!temp_token) {
-                msgDiv.className = 'msg error';
-                msgDiv.innerText = 'Sesión no encontrada. Regresa al login.';
+                errorDiv.innerText = 'Sesión no válida. Inicia sesión de nuevo.';
                 return;
             }
 
-            const response = await fetch('/api/verify-2fa', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ temp_token, code })
-            });
+            try {
+                const response = await fetch('/api/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ temp_token, code })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (response.ok && data.status === 'success') {
-                sessionStorage.removeItem('temp_token');
-                localStorage.setItem('access_token', data.access_token);
-                
-                msgDiv.className = 'msg success';
-                msgDiv.innerText = '¡Código correcto! Redirigiendo al menú...';
-
-                // Redirige al Menú Principal después de 1.5 segundos
-                setTimeout(() => {
-                    window.location.href = '/dashboard';
-                }, 1500);
-
-            } else {
-                msgDiv.className = 'msg error';
-                msgDiv.innerText = data.detail || 'Código incorrecto';
+                if (response.ok && data.status === 'success') {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    errorDiv.innerText = data.detail || 'Código incorrecto';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Error de conexión con el servidor';
             }
         });
     </script>

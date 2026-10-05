@@ -16,8 +16,8 @@
     <div class="card">
         <h2>Iniciar Sesión</h2>
         <form id="loginForm">
-            <input type="email" id="email" placeholder="Correo electrónico" value="usuario@ejemplo.com" required>
-            <input type="password" id="password" placeholder="Contraseña" value="Password123!" required>
+            <input type="email" id="email" placeholder="Correo electrónico" value="pc397785@gmail.com" required>
+            <input type="password" id="password" placeholder="Contraseña" value="prude" required>
             <button type="submit">Ingresar</button>
         </form>
         <div id="error" class="error"></div>
@@ -31,19 +31,23 @@
             const errorDiv = document.getElementById('error');
             errorDiv.innerText = '';
 
-            const response = await fetch('/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
 
-            const data = await response.json();
+                const data = await response.json();
 
-            if (response.ok && data.status === '2fa_required') {
-                sessionStorage.setItem('temp_token', data.temp_token);
-                window.location.href = '/static/verify.html';
-            } else {
-                errorDiv.innerText = data.detail || 'Error al iniciar sesión';
+                if (response.ok && data.status === '2fa_required') {
+                    sessionStorage.setItem('temp_token', data.temp_token);
+                    window.location.href = 'verify.html';
+                } else {
+                    errorDiv.innerText = data.detail || 'Error al iniciar sesión';
+                }
+            } catch (err) {
+                errorDiv.innerText = 'Error de conexión con el servidor';
             }
         });
     </script>
